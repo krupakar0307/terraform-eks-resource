@@ -129,9 +129,20 @@ Above policy is attached to role for assumeRole   `eks.amazonaws.com`
 
 5- Create OIDC provider for service accounts create for pod permissions. for eg, if pod needs to communicate with other aws services, then it need iam roles to be attahced which is serivce accounts; here we require service accoutns for cluster-autoscaler and s3 bucker to access some file for test.
 
-6- Deploy autosclaer once after oidc  and autoscaler-role.tf files are applied. Then deploy cluster autoscaler in cluster where cluster-autostcaler.yaml file is available.
-`kubectl apply -f k8s/cluster-autoscaler.yaml` - to deploy autoscaler which is useful auto scale workers based on resources lack.
+6- After applying the oidc and `autoscaler-role.tf` files, deploy the cluster autoscaler using the `kubectl apply -f k8s/cluster-autoscaler.yaml` command. This autoscaler dynamically adjusts the number of worker nodes based on resource demand. Ensure that the cluster-autoscaler.yaml file contains accurate information such as the "account ID, cluster name, and version."
 ##### Note : Check service account conf (account_id), cluster name and version in cluster-autoscaler.yaml. other wise autosaler will not perform scaling operations.
-6- Finally test-iam-roles.tf file is a  permission for s3 access, apply it and test deploy pod and exec in and check `aws s3 ls`
+
+7- Finally test-iam-roles.tf file is a  permission for s3 access, apply it and test deploy pod and exec in and check `aws s3 ls`
+
+
+
+## Usage:
+
+1. Clone Repostory
+2. Insert/Replace your values in variables file.
+3. Proceed with terraform init, terraform plan and apply, this will provision all require eks   cluster. 
+4. Once cluster is provisioned, deploy autoscaler - change cluster version, accunt_id and cluster name. then apply cluster-autoscaler. The pod should run in kube-system namespace.
+5. Now you can deploy k8s folder files, where it had internal, public LB's for practice purpose. You can access files from bucket inside in pod.  
+
 
 ------------------------------------------------------------------------------------------------
